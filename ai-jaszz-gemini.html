@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Jaszz Gemini</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    /* Background video */
+    #bg-video {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      min-width: 100%;
+      min-height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      filter: brightness(0.5) blur(2px);
+    }
+    .chatbox {
+      width: 500px;
+      max-width: 90%;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 0 25px cyan, 0 0 50px magenta;
+      backdrop-filter: blur(10px);
+    }
+    .messages {
+      height: 300px;
+      overflow-y: auto;
+      margin-bottom: 15px;
+    }
+    .msg {
+      margin: 8px 0;
+      padding: 10px;
+      border-radius: 10px;
+    }
+    .user {
+      background: #4a00e0;
+      text-align: right;
+    }
+    .ai {
+      background: #00c9ff;
+      color: #000;
+    }
+    input {
+      width: 70%;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+    }
+    button {
+      padding: 10px 15px;
+      border: none;
+      background: cyan;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-left: 5px;
+      font-weight: bold;
+    }
+    button:hover {
+      background: magenta;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <!-- Background video -->
+  <video autoplay muted loop id="bg-video">
+    <source src="https://files.catbox.moe/ctpfd0.mp4" type="video/mp4" />
+  </video>
+
+  <!-- Chatbox -->
+  <div class="chatbox">
+    <div class="messages" id="messages"></div>
+    <input type="text" id="userInput" placeholder="Tanya sesuatu..." />
+    <button onclick="sendMessage()">Kirim</button>
+  </div>
+
+  <script>
+    const messagesEl = document.getElementById("messages");
+    const inputEl = document.getElementById("userInput");
+    const API_KEY = "PASTE_APIKEY_GEMINI_DI_SINI"; // <-- Ganti pake API Key kamu
+
+    async function sendMessage() {
+      const userText = inputEl.value.trim();
+      if (!userText) return;
+
+      addMessage(userText, "user");
+      inputEl.value = "";
+
+      try {
+        const res = await fetch(
+          "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + API_KEY,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [{ role: "user", parts: [{ text: userText }] }]
+            })
+          }
+        );
+        const data = await res.json();
+        const aiReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "⚠️ Error dari AI";
+        addMessage(aiReply, "ai");
+      } catch (err) {
+        addMessage("❌ Gagal konek ke Gemini: " + err.message, "ai");
+      }
+    }
+
+    function addMessage(text, sender) {
+      const div = document.createElement("div");
+      div.className = "msg " + sender;
+      div.textContent = text;
+      messagesEl.appendChild(div);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+  </script>
+</body>
+</html>
