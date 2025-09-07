@@ -14,17 +14,8 @@
       align-items: center;
       height: 100vh;
       overflow: hidden;
-    }
-    /* Background video */
-    #bg-video {
-      position: fixed;
-      right: 0;
-      bottom: 0;
-      min-width: 100%;
-      min-height: 100%;
-      object-fit: cover;
-      z-index: -1;
-      filter: brightness(0.5) blur(2px);
+      background: url("https://files.catbox.moe/bykre9.png") no-repeat center center fixed;
+      background-size: cover;
     }
     .chatbox {
       width: 500px;
@@ -76,11 +67,6 @@
   </style>
 </head>
 <body>
-  <!-- Background video -->
-  <video autoplay muted loop id="bg-video">
-    <source src="https://files.catbox.moe/bykre9.png" type="png" />
-  </video>
-p
   <!-- Chatbox -->
   <div class="chatbox">
     <div class="messages" id="messages"></div>
